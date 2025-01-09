@@ -1,4 +1,4 @@
-package com.trisModels;
+package com.tris.Models;
 
 import java.time.LocalDate;
 
@@ -7,13 +7,14 @@ public class Bill {
 	private String type;
 	private double amount;
 	private LocalDate dueDate;
-	private int state;
+	private String state;
 	private String provider;
+	private LocalDate scheduleDate;
 
 	public Bill() {
 	}
 
-	public Bill(int id, String type, double amount, LocalDate dueDate, int state, String provider) {
+	public Bill(int id, String type, double amount, LocalDate dueDate, String state, String provider) {
 		super();
 		this.id = id;
 		this.type = type;
@@ -21,9 +22,8 @@ public class Bill {
 		this.dueDate = dueDate;
 		this.state = state;
 		this.provider = provider;
+		this.scheduleDate = null;
 	}
-	
-	
 
 	/**
 	 * @return the id
@@ -84,14 +84,14 @@ public class Bill {
 	/**
 	 * @return the state
 	 */
-	public int getState() {
+	public String getState() {
 		return state;
 	}
 
 	/**
 	 * @param state the state to set
 	 */
-	public void setState(int state) {
+	public void setState(String state) {
 		this.state = state;
 	}
 
@@ -107,6 +107,20 @@ public class Bill {
 	 */
 	public void setProvider(String provider) {
 		this.provider = provider;
+	}
+
+	/**
+	 * @return the scheduleDate
+	 */
+	public LocalDate getScheduleDate() {
+		return scheduleDate;
+	}
+
+	/**
+	 * @param scheduleDate the scheduleDate to set
+	 */
+	public void setScheduleDate(LocalDate scheduleDate) {
+		this.scheduleDate = scheduleDate;
 	}
 
 }

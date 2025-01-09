@@ -1,4 +1,4 @@
-package com.trisModels;
+package com.tris.Models;
 
 import java.util.List;
 

@@ -9,4 +9,7 @@ public interface PaymentService {
     void listPayments();
     void searchBillByProvider(String provider);
     double getBalance();
+    void addBill(String type, double amount, String dueDate, String provider);
+    void deleteBill(int billId);
+    void updateBill(int billId, String type, double amount, String dueDate, String provider);
 }
