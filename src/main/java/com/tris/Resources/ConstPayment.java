@@ -24,8 +24,8 @@ public class ConstPayment {
 	
 	
 	// Format ngày giờ
-	public static final String DATE_FORMAT = "yyyy/MM/dd";
-	public static final String DATE_FORMAT_OUTPUT = "YYYY/MM/DD";
+	public static final String DATE_FORMAT = "dd/MM/yyyy";
+	public static final String DATE_FORMAT_OUTPUT = "DD/MM/YYYY";
 	
 	
 }

@@ -34,7 +34,7 @@ public class TestPaymentServiceImpl {
     @Test
     public void testAddBill() {
         // Thêm hóa đơn mới
-        paymentService.addBill("INTERNET", 300000, "2025/02/10", "VNPT");
+        paymentService.addBill("INTERNET", 300000, LocalDate.of(2025, 2, 10), "VNPT");
 
         // Kiểm tra hóa đơn mới có tồn tại trong danh sách không
         List<Bill> bills = customer.getBills();
@@ -72,7 +72,7 @@ public class TestPaymentServiceImpl {
     @Test
     public void testUpdateBill() {
         // Cập nhật thông tin hóa đơn với ID = 2
-        paymentService.updateBill(2, "INTERNET", 500000, "2025/03/15", "VNPT");
+        paymentService.updateBill(2, "INTERNET", 500000, LocalDate.of(2025, 3, 15), "VNPT");
 
         // Kiểm tra thông tin hóa đơn sau khi cập nhật
         Bill updatedBill = customer.getBills().stream()
@@ -90,7 +90,7 @@ public class TestPaymentServiceImpl {
     @Test
     public void testUpdateBillNotFound() {
         // Cố gắng cập nhật hóa đơn không tồn tại
-        paymentService.updateBill(99, "INTERNET", 500000, "2025/03/15", "VNPT");
+        paymentService.updateBill(99, "INTERNET", 500000, LocalDate.of(2025, 3, 15), "VNPT");
 
         // Danh sách hóa đơn không thay đổi
         List<Bill> bills = customer.getBills();
@@ -173,22 +173,22 @@ public class TestPaymentServiceImpl {
     @Test
     public void testSchedulePayment() {
         // Lên lịch thanh toán cho hóa đơn
-        paymentService.schedulePayment(1, "2025/01/14");
+        paymentService.schedulePayment(1, LocalDate.of(2025, 1, 14));
 
         // Kiểm tra ngày lên lịch
         Bill scheduledBill = customer.getBills().get(0);
         assertEquals(LocalDate.of(2025, 1, 14), scheduledBill.getScheduleDate());
     }
 
-    @Test
-    public void testSchedulePaymentInvalidDate() {
-        // Lên lịch thanh toán với ngày không hợp lệ
-        paymentService.schedulePayment(1, "INVALID_DATE");
-
-        // Hóa đơn không có ngày được lên lịch
-        Bill bill = customer.getBills().get(0);
-        assertNull(bill.getScheduleDate());
-    }
+//    @Test
+//    public void testSchedulePaymentInvalidDate() {
+//        // Lên lịch thanh toán với ngày không hợp lệ
+//        paymentService.schedulePayment(1, "INVALID_DATE");
+//
+//        // Hóa đơn không có ngày được lên lịch
+//        Bill bill = customer.getBills().get(0);
+//        assertNull(bill.getScheduleDate());
+//    }
 
     @Test
     public void testSearchBillByProvider() {

@@ -1,5 +1,8 @@
 package com.tris;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 import com.tris.Resources.ConstPayment;
@@ -16,6 +19,7 @@ public class App {
 
 		// Tạo đối tượng PaymentService thông qua Factory
 		PaymentService paymentService = ServiceFactory.createPaymentService();
+		final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(ConstPayment.DATE_FORMAT);
 		try (Scanner scanner = new Scanner(System.in)) {
 			System.out.println("Welcome to the Bill Payment System!");
 
@@ -28,17 +32,20 @@ public class App {
 
 				try {
 					switch (command) {
+					// Thêm bill
 					case ConstPayment.ADD_BILL:
 						if (parts.length != 5) {
-							System.out.println("Invalid command. Usage: ADD_BILL <type> <amount> <due_date> <provider>");
+							System.out
+									.println("Invalid command. Usage: ADD_BILL <type> <amount> <due_date> <provider>");
 							break;
 						}
 						String type = parts[1];
 						double amount = Double.parseDouble(parts[2]);
-						String dueDate = parts[3];
+						LocalDate dueDate = LocalDate.parse(parts[3], dateTimeFormatter);
 						String provider = parts[4];
 						paymentService.addBill(type, amount, dueDate, provider);
 						break;
+					// Xóa bill
 					case ConstPayment.DELETE_BILL:
 						if (parts.length != 2) {
 							System.out.println("Invalid command. Usage: DELETE_BILL <bill_id>");
@@ -47,6 +54,7 @@ public class App {
 						int billIdToDelete = Integer.parseInt(parts[1]);
 						paymentService.deleteBill(billIdToDelete);
 						break;
+					// Sửa bill
 					case ConstPayment.UPDATE_BILL:
 						if (parts.length != 6) {
 							System.out.println(
@@ -56,13 +64,15 @@ public class App {
 						int billIdToUpdate = Integer.parseInt(parts[1]);
 						String newType = parts[2];
 						double newAmount = Double.parseDouble(parts[3]);
-						String newDueDate = parts[4]; // Format: YYYY-MM-DD
+						LocalDate newDueDate = LocalDate.parse(parts[4], dateTimeFormatter);
 						String newProvider = parts[5];
 						paymentService.updateBill(billIdToUpdate, newType, newAmount, newDueDate, newProvider);
 						break;
+					// Kiểm tra số tiền dư
 					case ConstPayment.BALANCE:
 						System.out.println("Your available balance: " + paymentService.getBalance());
 						break;
+					// Nạp tiền
 					case ConstPayment.CASH_IN:
 						if (parts.length != 2) {
 							System.out.println("Invalid command. Usage: CASH_IN <amount>");
@@ -72,11 +82,11 @@ public class App {
 						paymentService.cashIn(amountCashIn);
 						System.out.println("Your available balance: " + paymentService.getBalance());
 						break;
-
+					// Hiển thị danh sách các BIll
 					case ConstPayment.LIST_BILL:
 						paymentService.listBills();
 						break;
-
+					// trả hóa đoă
 					case ConstPayment.PAY:
 						if (parts.length < 2) {
 							System.out.println("Invalid command. Usage: PAY <bill_id> ...");
@@ -88,11 +98,11 @@ public class App {
 						}
 						paymentService.payBills(billIds);
 						break;
-
+					// hiển thị ngày đến hạn
 					case ConstPayment.DUE_DATE:
 						paymentService.listDueBills();
 						break;
-
+					// Lên lịch trả hóa đơn
 					case ConstPayment.SCHEDULE:
 						if (parts.length != 3) {
 							System.out.printf("Invalid command. Usage: SCHEDULE <bill_id> <%s>%n",
@@ -100,14 +110,14 @@ public class App {
 							break;
 						}
 						int billId = Integer.parseInt(parts[1]);
-						String scheduleDate = parts[2];
+						LocalDate scheduleDate = LocalDate.parse(parts[2], dateTimeFormatter);
 						paymentService.schedulePayment(billId, scheduleDate);
 						break;
-
+					// Danh sách các hóa đơn đã trả
 					case ConstPayment.LIST_PAYMENT:
 						paymentService.listPayments();
 						break;
-
+					// Tìm hóa đơn theo nhà cung cấp
 					case ConstPayment.SEARCH_BILL_BY_PROVIDER:
 						if (parts.length != 2) {
 							System.out.println("Invalid command. Usage: SEARCH_BILL_BY_PROVIDER <provider>");
@@ -116,7 +126,7 @@ public class App {
 						String providerSearch = parts[1];
 						paymentService.searchBillByProvider(providerSearch);
 						break;
-
+					// Thoát chương trình
 					case ConstPayment.EXIT:
 						System.out.println("Goodbye! Have a great day!");
 						return;
@@ -127,6 +137,9 @@ public class App {
 					}
 				} catch (NumberFormatException e) {
 					System.out.println("Invalid number format. Please check your input.");
+				} catch (DateTimeParseException e) {
+					System.out.printf("Invalid date format. Please ensure the date is in %s format.%n",
+							ConstPayment.DATE_FORMAT_OUTPUT);
 				} catch (Exception e) {
 					System.out.println("An error occurred: " + e.getMessage());
 				}
