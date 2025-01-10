@@ -105,18 +105,14 @@ public class PaymentServiceImpl implements PaymentService {
 	@Override
 	public void listPayments() {
 		System.out.println("No.   Amount     Payment Date    State      Bill ID");
-		List<Bill> listBillSorted = customer.getBills().stream()
-				.sorted(Comparator.comparing(Bill::getState).reversed()).collect(Collectors.toList());
+		List<Bill> listBillSorted = customer.getBills().stream().sorted(Comparator.comparing(Bill::getState).reversed())
+				.collect(Collectors.toList());
 		int index = 1;
 		for (Bill bill : listBillSorted) {
 			String paymentState = ConstPayment.PAID.equalsIgnoreCase(bill.getState()) ? ConstPayment.PROCESSED
 					: ConstPayment.PENDING;
-			System.out.printf("%-5d %-10.2f %-15s %-10s %d%n"
-					, index ++
-					, bill.getAmount()
-					, bill.getDueDate()
-					, paymentState,
-					bill.getId());
+			System.out.printf("%-5d %-10.2f %-15s %-10s %d%n", index++, bill.getAmount(), bill.getDueDate(),
+					paymentState, bill.getId());
 		}
 	}
 
@@ -147,44 +143,49 @@ public class PaymentServiceImpl implements PaymentService {
 
 	@Override
 	public void addBill(String type, double amount, String dueDate, String provider) {
-	    try {
-	        int newId = customer.getBills().size() + 1; // Tự động tạo ID
-	        LocalDate parsedDueDate = LocalDate.parse(dueDate, dateTimeFormatter); // Parse chuỗi thành LocalDate
-	        Bill newBill = new Bill(newId, type, amount, parsedDueDate, "NOT_PAID", provider);
-	        customer.getBills().add(newBill);
-	        System.out.printf("Bill added successfully! ID: %d%n", newId);
-	    } catch (Exception e) {
-	        System.out.printf("Invalid input. Please ensure the due date is in %s format.%n", ConstPayment.DATE_FORMAT_OUTPUT);
-	    }
+		try {
+			int newId = customer.getBills().stream()
+			        .mapToInt(Bill::getId)
+			        .max()
+			        .orElse(0) + 1;
+			LocalDate parsedDueDate = LocalDate.parse(dueDate, dateTimeFormatter); // Parse chuỗi thành LocalDate
+			Bill newBill = new Bill(newId, type, amount, parsedDueDate, "NOT_PAID", provider);
+			customer.getBills().add(newBill);
+			System.out.printf("Bill added successfully! ID: %d%n", newId);
+		} catch (Exception e) {
+			System.out.printf("Invalid input. Please ensure the due date is in %s format.%n",
+					ConstPayment.DATE_FORMAT_OUTPUT);
+		}
 	}
 
 	@Override
 	public void deleteBill(int billId) {
-	    Bill billToDelete = findBillById(billId);
-	    if (billToDelete != null) {
-	        customer.getBills().remove(billToDelete);
-	        System.out.printf("Bill with ID %d has been deleted successfully.%n", billId);
-	    } else {
-	        System.out.printf("Bill with ID %d not found.%n", billId);
-	    }
+		Bill billToDelete = findBillById(billId);
+		if (billToDelete != null) {
+			customer.getBills().remove(billToDelete);
+			System.out.printf("Bill with ID %d has been deleted successfully.%n", billId);
+		} else {
+			System.out.printf("Bill with ID %d not found.%n", billId);
+		}
 	}
 
 	@Override
 	public void updateBill(int billId, String type, double amount, String dueDate, String provider) {
-	    Bill billToUpdate = findBillById(billId);
-	    if (billToUpdate != null) {
-	        try {
-	            LocalDate parsedDueDate = LocalDate.parse(dueDate,dateTimeFormatter);
-	            billToUpdate.setType(type);
-	            billToUpdate.setAmount(amount);
-	            billToUpdate.setDueDate(parsedDueDate);
-	            billToUpdate.setProvider(provider);
-	            System.out.printf("Bill with ID %d has been updated successfully.%n", billId);
-	        } catch (Exception e) {
-	            System.out.printf("Invalid input. Please ensure the due date is in %s format.%n",ConstPayment.DATE_FORMAT_OUTPUT);
-	        }
-	    } else {
-	        System.out.printf("Bill with ID %d not found.%n", billId);
-	    }
+		Bill billToUpdate = findBillById(billId);
+		if (billToUpdate != null) {
+			try {
+				LocalDate parsedDueDate = LocalDate.parse(dueDate, dateTimeFormatter);
+				billToUpdate.setType(type);
+				billToUpdate.setAmount(amount);
+				billToUpdate.setDueDate(parsedDueDate);
+				billToUpdate.setProvider(provider);
+				System.out.printf("Bill with ID %d has been updated successfully.%n", billId);
+			} catch (Exception e) {
+				System.out.printf("Invalid input. Please ensure the due date is in %s format.%n",
+						ConstPayment.DATE_FORMAT_OUTPUT);
+			}
+		} else {
+			System.out.printf("Bill with ID %d not found.%n", billId);
+		}
 	}
 }

@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import com.tris.Models.Bill;
 import com.tris.Models.Customer;
+import com.tris.Resources.ConstPayment;
 
+import FakeData.FakeDataCreate;
 import Services.PaymentServiceImpl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,10 +23,11 @@ public class TestPaymentServiceImpl {
     @BeforeEach
     public void setup() {
         // Tạo dữ liệu mẫu
-        customer = new Customer(1, "John Doe", 0, List.of(
-                new Bill(1, "ELECTRIC", 200000, LocalDate.of(2025, 1, 15), "NOT_PAID", "EVN_HCMC"),
-                new Bill(2, "WATER", 150000, LocalDate.of(2025, 1, 20), "NOT_PAID", "SAVACO_HCMC")
-        ));
+		List<Bill> listBills = new ArrayList<Bill>();
+		listBills.add(new Bill(1, "ELECTRIC", 200000, LocalDate.of(2025, 1, 15), "NOT_PAID", "EVN_HCMC"));
+		listBills.add(new Bill(2, "WATER", 150000, LocalDate.of(2025, 1, 20), "NOT_PAID", "SAVACO_HCMC"));
+		
+        customer = new Customer(1, "Tris", 0, listBills);
         paymentService = new PaymentServiceImpl(customer);
     }
 
@@ -68,7 +72,7 @@ public class TestPaymentServiceImpl {
     @Test
     public void testUpdateBill() {
         // Cập nhật thông tin hóa đơn với ID = 2
-        paymentService.updateBill(2, "INTERNET", 500000, "2025-03-15", "VNPT");
+        paymentService.updateBill(2, "INTERNET", 500000, "2025/03/15", "VNPT");
 
         // Kiểm tra thông tin hóa đơn sau khi cập nhật
         Bill updatedBill = customer.getBills().stream()
@@ -86,7 +90,7 @@ public class TestPaymentServiceImpl {
     @Test
     public void testUpdateBillNotFound() {
         // Cố gắng cập nhật hóa đơn không tồn tại
-        paymentService.updateBill(99, "INTERNET", 500000, "2025-03-15", "VNPT");
+        paymentService.updateBill(99, "INTERNET", 500000, "2025/03/15", "VNPT");
 
         // Danh sách hóa đơn không thay đổi
         List<Bill> bills = customer.getBills();
